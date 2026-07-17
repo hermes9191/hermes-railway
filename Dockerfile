@@ -16,13 +16,24 @@ RUN mkdir -p /app/data && \
 
 RUN npm install && npm run build
 
+# Fix standalone mode: Next.js standalone expects static files at
+# .next/standalone/.next/static/ but build puts them at .next/static/
+# Symlink to make them accessible
+RUN mkdir -p /app/9router/.next/standalone/.next && \
+    ln -sf /app/9router/.next/static /app/9router/.next/standalone/.next/static
+
+# Also need public/ folder
+RUN cp -r public /app/9router/.next/standalone/public 2>/dev/null || true
+
 RUN rm -rf .env
 
-EXPOSE 8080
+EXPOSE ${PORT:-8080}
 
 ENV DATA_DIR=/app/data
 ENV NODE_ENV=production
-ENV PORT=8080
 ENV HOSTNAME=0.0.0.0
 
-CMD cp custom-server.js .next/standalone/custom-server.js && cd .next/standalone && node custom-server.js
+CMD cp custom-server.js .next/standalone/custom-server.js && \
+    cp -r public .next/standalone/public 2>/dev/null; \
+    cd .next/standalone && \
+    node custom-server.js
