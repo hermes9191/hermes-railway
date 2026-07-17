@@ -11,18 +11,13 @@ RUN apt-get update && apt-get install -y \
     && apt-get install -y nodejs \
     && rm -rf /var/lib/apt/lists/*
 
-# ۲. نصب uv برای پایتون
-ENV UV_SYSTEM_PYTHON=1
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh
-ENV PATH="/root/.cargo/bin:${PATH}"
-
 WORKDIR /app
 
 # ════════════════════════════════════════
 # ۳. Hermes Agent (لازمه چون webui بهش وصل میشه)
 # ════════════════════════════════════════
 RUN git clone https://github.com/NousResearch/hermes-agent.git /app/hermes-agent
-RUN cd /app/hermes-agent && uv pip install -e .
+RUN cd /app/hermes-agent && pip install -e .
 
 # ════════════════════════════════════════
 # ۴. Hermes WebUI (nesquena) — رابط کاربری اصلی
