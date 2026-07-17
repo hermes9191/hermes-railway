@@ -14,30 +14,24 @@ export NGINX_PORT="${PORT:-3000}"
 R9_URL="${R9_URL:-https://9router-production-eac7.up.railway.app/v1}"
 R9_API_KEY="${R9_API_KEY:-}"
 
-# Also set as env vars for hermes agent compatibility
+# Set env vars for hermes agent compatibility
 export CUSTOM_API_KEY="$R9_API_KEY"
 export CUSTOM_BASE_URL="$R9_URL"
 
 echo "[1] Writing Hermes config..."
 mkdir -p /data/.hermes
 
-# Remove old config.yaml so we start fresh
+# Remove old config so we start fresh
 rm -f /data/.hermes/config.yaml
 
 if [ -n "$R9_API_KEY" ]; then
   cat > /data/.hermes/config.yaml << CONFIG
 model:
   default: Flash
-  provider: custom
+  provider: custom:9router
   base_url: ${R9_URL}
   api_key: ${R9_API_KEY}
   api_mode: chat_completions
-
-providers:
-  custom:
-    base_url: ${R9_URL}
-    api_key: ${R9_API_KEY}
-    api_mode: chat_completions
 
 custom_providers:
   - name: 9router
