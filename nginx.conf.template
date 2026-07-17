@@ -16,9 +16,7 @@ http {
         listen ${NGINX_PORT};
         server_name _;
 
-        # ═══════════════════════════════════
-        # 9Router — OpenAI-compatible Proxy
-        # ═══════════════════════════════════
+        # ── 9Router: OpenAI Proxy ──────────────────────────────
         location /v1/ {
             proxy_pass http://127.0.0.1:20128/;
             proxy_http_version 1.1;
@@ -29,7 +27,6 @@ http {
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
             proxy_read_timeout 900s;
-            proxy_send_timeout 900s;
         }
         location = /v1 {
             proxy_pass http://127.0.0.1:20128;
@@ -37,20 +34,18 @@ http {
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
         }
 
-        # 9Router — Next.js assets
+        # ── 9Router: Next.js assets ───────────────────────────
         location /_next/ {
             proxy_pass http://127.0.0.1:20128;
             proxy_http_version 1.1;
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
         }
 
-        # 9Router — Panel Pages (Dashboard, Login, Landing)
+        # ── 9Router: Panel pages (بدون تداخل) ────────────────
         location /dashboard {
             proxy_pass http://127.0.0.1:20128;
             proxy_http_version 1.1;
@@ -59,87 +54,8 @@ http {
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
         }
-        location /login {
-            proxy_pass http://127.0.0.1:20128;
-            proxy_http_version 1.1;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
-        }
-        location /landing {
-            proxy_pass http://127.0.0.1:20128;
-            proxy_http_version 1.1;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
-        }
-        location /callback/ {
-            proxy_pass http://127.0.0.1:20128/;
-            proxy_http_version 1.1;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
-        }
 
-        # 9Router — OAuth (Google/GitHub callback redirects)
-        location /api/oauth/ {
-            proxy_pass http://127.0.0.1:20128/;
-            proxy_http_version 1.1;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
-        }
-        # 9Router — unique API endpoints (بدون تداخل با WebUI)
-        location /api/init {
-            proxy_pass http://127.0.0.1:20128;
-            proxy_http_version 1.1;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
-        }
-        location /api/keys {
-            proxy_pass http://127.0.0.1:20128;
-            proxy_http_version 1.1;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
-        }
-        location /api/version {
-            proxy_pass http://127.0.0.1:20128;
-            proxy_http_version 1.1;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
-        }
-        location /api/shutdown {
-            proxy_pass http://127.0.0.1:20128;
-            proxy_http_version 1.1;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
-        }
-        # 9Router — مدیریت providers و مدل‌ها (تداخل با WebUI)
-        # اولویت با 9Router برای مدیریت API Gateway
-        location ~ ^/api/(providers|models|settings|auth|usage|health|headroom|pricing|cli-tools|combos|locale|translator|media-providers|proxy-pools|provider-nodes|mcp|tags|pxpipe|tunnel|v1beta)(/|$) {
-            proxy_pass http://127.0.0.1:20128;
-            proxy_http_version 1.1;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
-        }
-
-        # ═══════════════════════════════════
-        # Hermes WebUI — مسیر اصلی
-        # ═══════════════════════════════════
+        # ── Hermes WebUI: همه مسیرهای باقی‌مانده ─────────────
         location / {
             proxy_pass http://127.0.0.1:8787;
             proxy_http_version 1.1;
