@@ -29,7 +29,7 @@ RUN cd /app/hermes-webui && pip install -r requirements.txt
 # ۵. 9Router (decolua) — AI Gateway
 # ════════════════════════════════════════
 RUN git clone https://github.com/decolua/9router.git /app/9router
-RUN cd /app/9router && npm ci && npm run build
+RUN cd /app/9router && npm install && npm run build
 
 # ════════════════════════════════════════
 # ۶. تنظیمات نهایی
