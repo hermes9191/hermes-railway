@@ -31,11 +31,6 @@ custom_providers:
     base_url: ${R9_URL}
     api_key: ${R9_API_KEY}
     api_mode: chat_completions
-    models:
-      Flash:
-        context_length: 1000000
-      Mimo:
-        context_length: 1000000
 
 display:
   tool_progress: all
