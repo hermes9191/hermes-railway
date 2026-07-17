@@ -29,6 +29,9 @@ if [ -n "$R9_API_KEY" ]; then
 model:
   default: Flash
   provider: custom
+  base_url: ${R9_URL}
+  api_key: ${R9_API_KEY}
+  api_mode: chat_completions
 
 providers:
   custom:
