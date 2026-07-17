@@ -14,21 +14,22 @@ export NGINX_PORT="${PORT:-3000}"
 R9_URL="${R9_URL:-https://9router-production-eac7.up.railway.app/v1}"
 R9_API_KEY="${R9_API_KEY:-}"
 
-# Set env vars for hermes agent compatibility
+# Export ALL possible env vars that hermes agent checks
 export CUSTOM_API_KEY="$R9_API_KEY"
 export CUSTOM_BASE_URL="$R9_URL"
+# OPENAI_API_KEY is checked by _resolve_openrouter_runtime for any URL
+export OPENAI_API_KEY="$R9_API_KEY"
+# Also set OPENROUTER_API_KEY as another fallback
+export OPENROUTER_API_KEY="$R9_API_KEY"
 
 echo "[1] Writing Hermes config..."
 mkdir -p /data/.hermes
-
-# Remove old config so we start fresh
-rm -f /data/.hermes/config.yaml
 
 if [ -n "$R9_API_KEY" ]; then
   cat > /data/.hermes/config.yaml << CONFIG
 model:
   default: Flash
-  provider: custom:9router
+  provider: custom
   base_url: ${R9_URL}
   api_key: ${R9_API_KEY}
   api_mode: chat_completions
@@ -49,9 +50,12 @@ platforms:
   telegram:
     enabled: false
 CONFIG
-  echo "  ✅ Config written (R9_URL=${R9_URL})"
+  echo "  ✅ Config written with API Key set (length: ${#R9_API_KEY})"
+  echo "  ✅ R9_URL=${R9_URL}"
+  echo "  ✅ Env vars exported: CUSTOM_API_KEY, OPENAI_API_KEY, OPENROUTER_API_KEY"
 else
-  echo "  ⚠️  R9_API_KEY not set — keeping existing config.yaml (if any)"
+  echo "  ⚠️  R9_API_KEY not set — config.yaml won't have API key!"
+  echo "  Check Railway env vars for this service."
 fi
 
 echo "[2] Rendering Nginx config..."
@@ -74,6 +78,7 @@ echo "  → PID: $WEBUI_PID"
 sleep 3
 if kill -0 $WEBUI_PID 2>/dev/null; then
     echo "  ✅ WebUI is running"
+    echo "  ✅ Health check: test with curl http://127.0.0.1:8787/api/health"
 else
     echo "  ⚠️ WebUI failed to start!"
     tail -20 /tmp/hermes-webui.log
