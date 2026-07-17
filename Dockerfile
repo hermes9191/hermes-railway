@@ -6,13 +6,17 @@ RUN apt-get update && apt-get install -y \
     python3 \
     && rm -rf /var/lib/apt/lists/*
 
+# Clone 9Router from original repo
+RUN git clone https://github.com/decolua/9router.git /app/9router
+
 WORKDIR /app/9router
 
-COPY . .
+RUN mkdir -p /app/data && \
+    cp .env.example .env 2>/dev/null || true
 
 RUN npm install && npm run build
 
-RUN mkdir -p /app/data
+RUN rm -rf .env
 
 EXPOSE 8080
 
