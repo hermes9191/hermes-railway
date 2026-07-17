@@ -43,6 +43,9 @@ echo "[4] Starting 9Router AI Gateway..."
 cd /app/9router
 export PORT=20128
 export HOSTNAME=0.0.0.0
+# Copy custom-server.js next to standalone server.js (require('./server.js'))
+cp custom-server.js .next/standalone/custom-server.js
+cd .next/standalone
 node custom-server.js 2>&1 &
 echo "  → PID: $!"
 
