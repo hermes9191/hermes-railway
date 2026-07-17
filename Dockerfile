@@ -1,12 +1,14 @@
 FROM python:3.11-slim
 
-# ۱. نصب پیش‌نیازهای لینوکس، Nginx و Node.js
+# ۱. نصب پیش‌نیازهای لینوکس، Nginx، Node.js و Build Tools
 RUN apt-get update && apt-get install -y \
     curl \
     git \
     nginx \
     ffmpeg \
     gettext-base \
+    build-essential \
+    python3 \
     && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs \
     && rm -rf /var/lib/apt/lists/*
